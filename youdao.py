@@ -4,6 +4,7 @@ from pyquery import PyQuery as pq
 import getopt
 import sys
 import urllib
+src = "http://dict.youdao.com/search?q="
 
 def toChinese(D):
 	res = D("#phrsListTab .trans-container li")
@@ -21,20 +22,23 @@ def toEnglish(D):
 		print r.text
 
 
+# API
+def translate(word):
+	w = urllib.quote(word)
+	if w == word:
+		w = w.lower()
+	D = pq(url=src+w)
+	if w != word :
+		toEnglish(D)
+	else:
+		toChinese(D)
+
 def main():
-	src = "http://dict.youdao.com/search?q="
 	words = getopt.getopt(sys.argv[1:], "")
 	for word in words:
 		if len(word) == 0:
 			continue
-		w = urllib.quote(word[0])
-		if w == word[0]:
-			w = w.lower()
-		D = pq(url=src+w)
-		if w != word[0] :
-			toEnglish(D)
-		else:
-			toChinese(D)
+		translate(word[0])
 
 if __name__ == "__main__":
 	main()
